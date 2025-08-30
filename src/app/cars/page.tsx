@@ -1,0 +1,294 @@
+"use client"
+
+
+import { useEffect, useMemo, useState } from "react";
+import client from "@/lib/pocketbase";
+import EditCarModal from "@/components/editcarModal";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Link, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import AddCarModal from "@/components/addCarModal";
+
+
+type User = {
+    id: string;
+    username: string;
+    email?: string;
+    name?: string;
+};
+
+type Location = {
+    id: string;
+    name: string;
+};
+
+type CarModel = {
+    id: string;
+    name: string;
+    brand?: string;
+};
+
+type Car = {
+    collectionId: string;
+    collectionName: string;
+    id: string;
+    name: string;
+    volume: number;
+    user: string;
+    type: string;
+    location: {
+        lon: number;
+        lat: number;
+    };
+    from: string;
+    to: string;
+    model: string;
+    carNumber: string;
+    created: string;
+    updated: string;
+    expand?: {
+        user?: User;
+        from?: Location;
+        to?: Location;
+        model?: CarModel;
+    };
+};
+
+export default function CarsPage() {
+    const [cars, setCars] = useState<Car[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingCar, setEditingCar] = useState<Car | null>(null);
+    const [isauth, setIsauth] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = client.authStore.onChange(() => {
+            setIsauth(client.authStore.isValid);
+        });
+        // boshlang'ich holat
+        setIsauth(client.authStore.isValid);
+
+        return () => unsubscribe();
+    }, []);
+
+
+    function logout() {
+        client.authStore.clear();
+        setIsauth(false);
+    }
+
+
+    async function fetchCars() {
+        try {
+            setLoading(true);
+            const records = await client.collection("cars").getFullList<Car>({
+                expand: "user,from,to,model",
+            });
+            setCars(records);
+        } catch (error) {
+            console.error("Error fetching cars:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function addCar(data: Partial<Omit<Car, 'id'>>) {
+        try {
+            await client.collection("cars").create({
+                ...data, // Modaldan kelgan barcha ma'lumotlar
+                user: client.authStore.record?.id
+            });
+            fetchCars(); // Ro'yxatni yangilash
+        } catch (error) {
+            console.error("Error adding car:", error);
+        }
+    }
+
+    async function updateCar(id: string, data: Partial<Car>) {
+        try {
+            await client.collection("cars").update(id, data);
+            fetchCars();
+        } catch (error) {
+            console.error("Error updating car:", error);
+        }
+    }
+
+    async function deleteCar(id: string) {
+        try {
+            await client.collection("cars").delete(id);
+            fetchCars();
+        } catch (error) {
+            console.error("Error deleting car:", error);
+        }
+    }
+
+    const handleOpenEditModal = (car: Car) => {
+        setEditingCar(car);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setEditingCar(null);
+    };
+
+    const handleSaveChanges = (updatedCarData: Partial<Car>) => {
+        if (!editingCar) return;
+        updateCar(editingCar.id, updatedCarData);
+        handleCloseModal();
+    };
+
+    useEffect(() => {
+        fetchCars();
+    }, []);
+
+    const formattedCars = useMemo(
+        () =>
+            cars.map((c) => ({
+                ...c,
+                _created: c.created ? new Date(c.created).toLocaleString() : "N/A",
+                _updated: c.updated ? new Date(c.updated).toLocaleString() : "N/A",
+            })),
+        [cars]
+    );
+
+    return (
+        <div className="mx-auto mt-8 max-w-[1600px] px-4">
+            {isauth ? (
+                <div>
+                    <a href="/auth/register">log in</a>
+                </div>
+            ) : (
+                <div>
+                    <Button variant="outline" onClick={logout}>Chiqish</Button>
+                </div>
+            )}
+            <Card className="border-2 shadow-sm">
+                <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <CardTitle className="text-2xl">Cars</CardTitle>
+                        <p className="text-sm text-muted-foreground">PocketBase dagi mashinalar roʻyxati</p>
+                    </div>
+                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                        <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 border">
+                            <Plus size={16} /> add
+                        </Button>
+                    </div>
+                </CardHeader>
+                <Separator />
+                <CardContent>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-16">
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            <span>Yuklanmoqda…</span>
+                        </div>
+                    ) : formattedCars.length === 0 ? (
+                        <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
+                            Hech qanday mashina topilmadi.
+                        </div>
+                    ) : (
+                        <ScrollArea className="w-full rounded-2xl border">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="min-w-[180px]">ID</TableHead>
+                                        <TableHead>Nom</TableHead>
+                                        <TableHead>Foydalanuvchi</TableHead>
+                                        <TableHead>Hajm</TableHead>
+                                        <TableHead>Turi</TableHead>
+                                        <TableHead>Model</TableHead>
+                                        <TableHead>Raqam</TableHead>
+                                        <TableHead>Dan</TableHead>
+                                        <TableHead>Gacha</TableHead>
+                                        <TableHead>Joylashuv</TableHead>
+                                        <TableHead>Yaratildi</TableHead>
+                                        <TableHead>Yangilandi</TableHead>
+                                        <TableHead className="w-[140px]">Amallar</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {formattedCars.map((car) => (
+                                        <TableRow key={car.id}>
+                                            <TableCell className="font-mono text-xs">{car.id}</TableCell>
+                                            <TableCell className="font-medium">{car.name}</TableCell>
+                                            <TableCell>
+                                                {car.expand?.user?.username ||
+                                                    car.expand?.user?.name ||
+                                                    car.expand?.user?.email ||
+                                                    "Noma'lum"}
+                                            </TableCell>
+                                            <TableCell>
+                                                {car.volume ? (
+                                                    <Badge variant="secondary">{car.volume}</Badge>
+                                                ) : (
+                                                    "N/A"
+                                                )}
+                                            </TableCell>
+                                            <TableCell>{car.type || "N/A"}</TableCell>
+                                            <TableCell>{car.expand?.model?.name || "Noma'lum"}</TableCell>
+                                            <TableCell>{car.carNumber || "N/A"}</TableCell>
+                                            <TableCell>{car.expand?.from?.name || "N/A"}</TableCell>
+                                            <TableCell>{car.expand?.to?.name || "N/A"}</TableCell>
+                                            <TableCell>
+                                                {car.location ? (
+                                                    <span className="font-mono text-xs">
+                                                        {car.location.lat}, {car.location.lon}
+                                                    </span>
+                                                ) : (
+                                                    "N/A"
+                                                )}
+                                            </TableCell>
+                                            <TableCell>{(car as any)._created}</TableCell>
+                                            <TableCell>{(car as any)._updated}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="gap-1"
+                                                        onClick={() => handleOpenEditModal(car)}
+                                                    >
+                                                        <Pencil size={16} /> Tahrirlash
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="destructive"
+                                                        className="gap-1"
+                                                        onClick={() => {
+                                                            if (confirm("Rostdan ham o'chirmoqchimisiz?")) deleteCar(car.id);
+                                                        }}
+                                                    >
+                                                        <Trash2 size={16} /> O'chirish
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </ScrollArea>
+                    )}
+                </CardContent>
+            </Card>
+
+            <AddCarModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSave={addCar}
+            />
+        </div>
+    );
+}
