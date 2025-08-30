@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
     DialogFooter,
     DialogClose,
 } from "@/components/ui/dialog";
@@ -38,6 +37,8 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
         carNumber: "",
     });
 
+    
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setCarData((prev) => ({
@@ -62,7 +63,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
             return;
         }
         onSave(carData);
-        onClose(); // Saqlagandan keyin oynani yopish
+        onClose(); 
         inputReset();
     };
 

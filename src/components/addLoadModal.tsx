@@ -1,219 +1,150 @@
-'use client';
+// src/components/addLoadModal.tsx
 
-import { useEffect, useState } from 'react';
-import client from '@/lib/pocketbase';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogDescription,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 
-// Mavjud tiplardan foydalanamiz
-// type User = { id: string; username: string };
-type Location = { id: string; name: string };
-type Car = { id: string; model: string };
-type PaymentMethod = { id: string; type: string };
-type LoadData = {
-    name: string;
-    fromLoc: string;
-    toLoc: string;
-    user: string;
-    volume: string;
-    InAdvanceMethod: boolean;
-    telegram: string;
-    paymentMethod: string;
-    date: string;
-    phoneNumber: string;
-    car: string;
-    price: string;
+type AddLoadModalProps = {
+    onClose: () => void;
+    onSave: (data: any) => void;
 };
 
-interface AddLoadModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (data: LoadData) => void;
-}
-
-export default function AddLoadModal({ isOpen, onClose, onSave }: AddLoadModalProps) {
-    const [formData, setFormData] = useState<LoadData>({
-        name: '',
-        volume: '',
-        date: '',
-        price: '',
-        phoneNumber: '',
-        telegram: '',
-        fromLoc: '',
-        toLoc: '',
-        car: '',
-        paymentMethod: '',
-        user: '',
+const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
+    // Majburiy maydonlar uchun state-lar
+    const [name, setName] = useState('');
+    const [fromLoc, setFromLoc] = useState('');
+    const [toLoc, setToLoc] = useState('');
+    const [volume, setVolume] = useState('');
+    const [price, setPrice] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [telegram, setTelegram] = useState('');
+    
+    // Boshqa majburiy maydonlarga standart qiymatlar berish
+    const defaultData = {
+        user: "o'zingizning foydalanuvchi ID", // Sizning joriy foydalanuvchingizning ID'si bo'lishi kerak
+        car: "o'zingizning avtomobil ID", // Tanlangan avtomobil ID'si
+        paymentMethod: "o'zingizning to'lov usuli ID", // Tanlangan to'lov usuli ID'si
         InAdvanceMethod: false,
-    });
-
-    // Select-lar uchun ma'lumotlarni saqlash
-    //   const [users, setUsers] = useState<User[]>([]);
-    const [locations, setLocations] = useState<Location[]>([]);
-    const [cars, setCars] = useState<Car[]>([]);
-    const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-
-    // Modal ochilganda kerakli ma'lumotlarni PocketBase'dan yuklash
-    useEffect(() => {
-        async function fetchOptions() {
-            try {
-                // const usersData = await client.collection('users').getFullList<User>();
-                // const locationsData = await client.collection('locations').getFullList<Location>();
-                const carsData = await client.collection('cars').getFullList<Car>();
-                const paymentMethodsData = await client.collection('paymentMethods').getFullList<PaymentMethod>();
-
-                // setUsers(usersData);
-                // setLocations(locationsData);
-                setCars(carsData);
-                setPaymentMethods(paymentMethodsData);
-            } catch (error) {
-                console.error("Failed to fetch options for the form:", error);
-            }
-        }
-        if (isOpen) {
-            fetchOptions();
-        }
-    }, [isOpen]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSelectChange = (name: keyof LoadData, value: string) => {
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleCheckboxChange = (checked: boolean) => {
-        setFormData((prev) => ({ ...prev, InAdvanceMethod: checked }));
+        date: new Date().toISOString(), // Joriy sana
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSave(formData);
+        onSave({ 
+            name, 
+            fromLoc, 
+            toLoc, 
+            volume,
+            price,
+            phoneNumber,
+            telegram,
+            ...defaultData // Majburiy ma'lumotlarga qo'shimcha standart qiymatlar
+        });
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <Dialog open={true} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Yangi yuk qo'shish</DialogTitle>
-                    <DialogDescription>
-                        Yangi yuk uchun barcha kerakli ma'lumotlarni to'ldiring.
-                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                        {/* Input fields */}
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Yuk nomi</Label>
-                            <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">
+                                Nomi
+                            </Label>
+                            <Input
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                className="col-span-3"
+                            />
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="volume">Hajmi (tonna)</Label>
-                            <Input id="volume" name="volume" value={formData.volume} onChange={handleChange} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="price">Narxi</Label>
-                            <Input id="price" name="price" value={formData.price} onChange={handleChange} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="phoneNumber">Telefon raqami</Label>
-                            <Input id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="date">Sana</Label>
-                            <Input id="date" name="date" type="date" value={formData.date} onChange={handleChange} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="telegram">Telegram username</Label>
-                            <Input id="telegram" name="telegram" value={formData.telegram} onChange={handleChange} />
-                        </div>
-
-                        {/* Select fields */}
-
-                        {/* Qayerdan */}
-                        <div className="space-y-2">
-                            <Label htmlFor="fromLoc">Qayerdan</Label>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="fromLoc" className="text-right">
+                                Qayerdan
+                            </Label>
                             <Input
                                 id="fromLoc"
-                                name="fromLoc"
-                                value={formData.fromLoc}
-                                onChange={handleChange}
-                                placeholder="Manzilni kiriting"
-                               
+                                value={fromLoc}
+                                onChange={(e) => setFromLoc(e.target.value)}
+                                required
+                                className="col-span-3"
                             />
                         </div>
-
-                        {/* Qayerga */}
-                        <div className="space-y-2">
-                            <Label htmlFor="toLoc">Qayerga</Label>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="toLoc" className="text-right">
+                                Qayerga
+                            </Label>
                             <Input
                                 id="toLoc"
-                                name="toLoc"
-                                value={formData.toLoc}
-                                onChange={handleChange}
-                                placeholder="Manzilni kiriting"
-                               
+                                value={toLoc}
+                                onChange={(e) => setToLoc(e.target.value)}
+                                required
+                                className="col-span-3"
                             />
                         </div>
-
-                        {/* Mashina */}
-                        <div className="space-y-2">
-                            <Label htmlFor="car">Mashina</Label>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="volume" className="text-right">
+                                Hajmi
+                            </Label>
                             <Input
-                                id="car"
-                                name="car"
-                                value={formData.car}
-                                onChange={handleChange}
-                                placeholder="Mashina nomini kiriting"
-                               
+                                id="volume"
+                                value={volume}
+                                onChange={(e) => setVolume(e.target.value)}
+                                required
+                                className="col-span-3"
                             />
                         </div>
-
-                        {/* To'lov usuli */}
-                        <div className="space-y-2">
-                            <Label htmlFor="paymentMethod">To'lov usuli</Label>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="price" className="text-right">
+                                Narxi
+                            </Label>
                             <Input
-                                id="paymentMethod"
-                                name="paymentMethod"
-                                value={formData.paymentMethod}
-                                onChange={handleChange}
-                                placeholder="To'lov usulini kiriting"
-                               
+                                id="price"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                required
+                                className="col-span-3"
                             />
                         </div>
-
-
-                        {/* Checkbox */}
-                        <div className="flex items-center space-x-2 pt-6">
-                            <Checkbox id="InAdvanceMethod" checked={formData.InAdvanceMethod} onCheckedChange={(checked) => handleCheckboxChange(checked as boolean)} />
-                            <Label htmlFor="InAdvanceMethod">Bo'nak (avans) beriladimi?</Label>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="phoneNumber" className="text-right">
+                                Telefon
+                            </Label>
+                            <Input
+                                id="phoneNumber"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                required
+                                className="col-span-3"
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="telegram" className="text-right">
+                                Telegram
+                            </Label>
+                            <Input
+                                id="telegram"
+                                value={telegram}
+                                onChange={(e) => setTelegram(e.target.value)}
+                                required
+                                className="col-span-3"
+                            />
                         </div>
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={onClose}>Bekor qilish</Button>
-                        <Button type="submit">Saqlash</Button>
+                        <Button type="submit">Qo'shish</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>
     );
-}
+};
+
+export default AddLoadModal;

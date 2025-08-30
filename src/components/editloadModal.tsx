@@ -15,18 +15,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 type Load = {
-  id: string;
   name: string;
-  fromLoc: string;
-  toLoc: string;
-  user: string;
   volume: string;
   InAdvanceMethod: boolean;
-  telegram: string;
-  paymentMethod: string;
   date: string;
   phoneNumber: string;
-  car: string;
   price: string;
 };
 
@@ -113,16 +106,6 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
             />
           </div>
 
-          <div>
-            <Label htmlFor="telegram">Telegram</Label>
-            <Input
-              id="telegram"
-              name="telegram"
-              value={formData.telegram || ""}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
 
           <div>
             <Label htmlFor="date">Sana</Label>
@@ -131,61 +114,6 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
               name="date"
               type="date"
               value={formData.date ? formData.date.split('T')[0] : ""}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="fromLoc">Qayerdan (Location ID)</Label>
-            <Input
-              id="fromLoc"
-              name="fromLoc"
-              value={formData.fromLoc || ""}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="toLoc">Qayerga (Location ID)</Label>
-            <Input
-              id="toLoc"
-              name="toLoc"
-              value={formData.toLoc || ""}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="car">Mashina (Car ID)</Label>
-            <Input
-              id="car"
-              name="car"
-              value={formData.car || ""}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="paymentMethod">To'lov usuli (Payment Method ID)</Label>
-            <Input
-              id="paymentMethod"
-              name="paymentMethod"
-              value={formData.paymentMethod || ""}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="user">Foydalanuvchi (User ID)</Label>
-            <Input
-              id="user"
-              name="user"
-              value={formData.user || ""}
               onChange={handleChange}
               className="mt-1"
             />
