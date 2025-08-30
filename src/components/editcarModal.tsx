@@ -12,21 +12,54 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+type User = {
+  id: string;
+  username: string;
+  email?: string;
+  name?: string;
+};
+
+type Location = {
+  id: string;
+  name: string;
+};
+
+type CarModel = {
+  id: string;
+  name: string;
+  brand?: string;
+};
+
 type Car = {
+  collectionId: string;
+  collectionName: string;
   id: string;
   name: string;
   volume: number;
-  type: string;
-  carNumber: string;
   user: string;
+  type: string;
+  location: {
+    lon: number;
+    lat: number;
+  };
   from: string;
   to: string;
+  model: string;
+  carNumber: string;
+  created: string;
+  updated: string;
+  expand?: {
+    user?: User;
+    from?: Location;
+    to?: Location;
+    model?: CarModel;
+  };
 };
 
 type EditCarModalProps = {
   car: Car;
   onClose: () => void;
-  onSave: (updatedCar: Partial<Car>) => void;
+  onSave: (updatedCar: Car) => void;
 };
 
 export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps) {
@@ -38,7 +71,10 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === "volume" ? (value === "" ? 0 : Number(value)) : value,
+    }));
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -51,23 +87,24 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-lg w-full">
         <DialogHeader>
-          <DialogTitle>edit car</DialogTitle>
+          <DialogTitle>Edit Car</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+        <div className="space-y-4 mt-2 max-h-[70vh] overflow-y-auto">
           <div>
-            <Label htmlFor="name">name</Label>
+            <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               name="name"
               value={formData.name || ""}
               onChange={handleChange}
               className="mt-1"
+              placeholder="Car name"
             />
           </div>
 
           <div>
-            <Label htmlFor="volume">volcume</Label>
+            <Label htmlFor="volume">Volume</Label>
             <Input
               id="volume"
               name="volume"
@@ -75,38 +112,104 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
               value={formData.volume || ""}
               onChange={handleChange}
               className="mt-1"
+              placeholder="Volume in m3"
             />
           </div>
 
           <div>
-            <Label htmlFor="type">type</Label>
+            <Label htmlFor="type">Type</Label>
             <Input
               id="type"
               name="type"
               value={formData.type || ""}
               onChange={handleChange}
               className="mt-1"
+              placeholder="Car type"
             />
           </div>
 
           <div>
-            <Label htmlFor="carNumber">carNumber</Label>
+            <Label htmlFor="carNumber">Car Number</Label>
             <Input
               id="carNumber"
               name="carNumber"
               value={formData.carNumber || ""}
               onChange={handleChange}
               className="mt-1"
+              placeholder="Car number"
             />
           </div>
 
-          <DialogFooter className="pt-4 flex justify-end gap-2">
-            <Button variant="outline" type="button" onClick={onClose}>
-              cancel
-            </Button>
-            <Button type="submit">save</Button>
-          </DialogFooter>
-        </form>
+          <div>
+            <Label htmlFor="model">Model</Label>
+            <Input
+              id="model"
+              name="model"
+              value={formData.expand?.model?.name || formData.model || ""}
+              onChange={handleChange}
+              className="mt-1"
+              placeholder="Car model"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="user">User</Label>
+            <Input
+              id="user"
+              name="user"
+              value={formData.expand?.user?.username || formData.expand?.user?.name || formData.user || ""}
+              onChange={handleChange}
+              className="mt-1"
+              placeholder="User name"
+              disabled
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              name="location"
+              value={formData.location ? `${formData.location.lat}, ${formData.location.lon}` : ""}
+              onChange={handleChange}
+              className="mt-1"
+              placeholder="Current location"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="from">From</Label>
+            <Input
+              id="from"
+              name="from"
+              value={formData.expand?.from?.name || formData.from || ""}
+              onChange={handleChange}
+              className="mt-1"
+              placeholder="Departure location"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="to">To</Label>
+            <Input
+              id="to"
+              name="to"
+              value={formData.expand?.to?.name || formData.to || ""}
+              onChange={handleChange}
+              className="mt-1"
+              placeholder="Destination"
+            />
+          </div>
+        </div>
+
+        <DialogFooter className="pt-4 flex justify-end gap-2">
+          <Button variant="outline" type="button" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="button" onClick={handleSubmit}>
+            Save
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

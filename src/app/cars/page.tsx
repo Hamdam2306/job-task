@@ -202,7 +202,6 @@ export default function CarsPage() {
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               <span>
                 Loading cars... Please wait.
-
               </span>
             </div>
           ) : formattedCars.length === 0 ? (
@@ -284,7 +283,7 @@ export default function CarsPage() {
                             className="gap-1"
                             onClick={() => {
                               if (
-                                confirm("Rostdan ham o'chirmoqchimisiz?")
+                                confirm("Are you sure you want to delete this car?")
                               )
                                 deleteCar(car.id);
                             }}

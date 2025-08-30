@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const client = new PocketBase("http://back.buyur.yurtal.tech");
+const client = new PocketBase("https://back.buyur.yurtal.tech");
 
 export default function LoginPage() {
   const router = useRouter();

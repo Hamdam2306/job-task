@@ -6,7 +6,7 @@ import PocketBase from 'pocketbase';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const client = new PocketBase('http://back.buyur.yurtal.tech');
+const client = new PocketBase('https://back.buyur.yurtal.tech');
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function RegisterPage() {
     setError("");
 
     if (password !== passwordConfirm) {
-      setError("Parollar bir-biriga mos kelmadi.");
+      setError("Passwords do not match.");
       setIsLoading(false);
       return;
     }

@@ -279,7 +279,7 @@ export default function LoadDetailPage() {
                                                         variant="destructive"
                                                         className="gap-1"
                                                         onClick={() => {
-                                                            if (confirm("Rostdan ham o'chirmoqchimisiz?"))
+                                                            if (confirm("Are you sure you want to delete this load?"))
                                                                 deleteload(load.id);
                                                         }}
                                                     >

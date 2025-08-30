@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import PocketBase from "pocketbase";
 
-const pb = new PocketBase('http://back.buyur.yurtal.tech');
+const pb = new PocketBase('https://back.buyur.yurtal.tech');
 
 export async function POST(req: Request) {
     try {
