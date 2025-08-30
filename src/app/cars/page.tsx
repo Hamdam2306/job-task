@@ -17,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import AddCarModal from "@/components/addCarModal";
+import Navbar from "@/components/navbar";
 
 type User = {
   id: string;
@@ -71,18 +72,6 @@ export default function CarsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = client.authStore.onChange(() => {
-      setIsauth(client.authStore.isValid);
-    });
-    setIsauth(client.authStore.isValid);
-    return () => unsubscribe();
-  }, []);
-
-  function logout() {
-    client.authStore.clear();
-    setIsauth(false);
-  }
 
   async function fetchCars() {
     if (abortControllerRef.current) {
@@ -182,18 +171,7 @@ export default function CarsPage() {
 
   return (
     <div className="mx-auto mt-8 max-w-[1600px] px-4">
-      {isauth ? (
-        <div>
-          <a href="/auth/register">log in</a>
-        </div>
-      ) : (
-        <div>
-          <Button variant="outline" onClick={logout}>
-            Chiqish
-          </Button>
-        </div>
-      )}
-
+      <Navbar />
       <Card className="border-2 shadow-sm">
         <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>

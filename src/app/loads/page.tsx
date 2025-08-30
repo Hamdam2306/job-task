@@ -12,9 +12,12 @@ import {
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import EditLoadModal from '@/components/editloadModal';
 import AddLoadModal from '@/components/addLoadModal';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@radix-ui/react-separator';
+import Navbar from '@/components/navbar';
 
 type User = {
     id: string;
@@ -169,91 +172,121 @@ export default function LoadDetailPage() {
         };
     }, []);
 
-    if (loading) {
-        return <div className="mx-auto mt-6">Loading...</div>;
-    }
 
     return (
-        <div className="mx-auto mt-6 max-w-[1700px] px-4">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Loads</h1>
-                <Button onClick={handleOpenAddModal} className="gap-1">
-                    <Plus size={16} /> add load
-                </Button>
-            </div>
-            <ScrollArea className="w-full rounded-2xl border p-5">
-                <Table className="w-full">
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>id</TableHead>
-                            <TableHead>name</TableHead>
-                            <TableHead>user</TableHead>
-                            <TableHead>volume</TableHead>
-                            <TableHead>date</TableHead>
-                            <TableHead>price</TableHead>
-                            <TableHead>phoneNumber</TableHead>
-                            <TableHead>from-to</TableHead>
-                            <TableHead>car</TableHead>
-                            <TableHead>payment</TableHead>
-                            <TableHead>Telegram</TableHead>
-                            <TableHead>InAdvanceMethod</TableHead>
-                            <TableHead>created</TableHead>
-                            <TableHead>updated</TableHead>
-                            <TableHead></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {loads.map((load) => (
-                            <TableRow key={load.id}>
-                                <TableCell>{load.id}</TableCell>
-                                <TableCell>{load.name}</TableCell>
-                                <TableCell>
-                                    {load.expand?.user?.username ||
-                                        load.expand?.user?.name ||
-                                        load.expand?.user?.email ||
-                                        "N/A"}
-                                </TableCell>
-                                <TableCell>{load.volume}</TableCell>
-                                <TableCell>{new Date(load.date).toLocaleDateString()}</TableCell>
-                                <TableCell>{load.price}</TableCell>
-                                <TableCell>{load.phoneNumber}</TableCell>
-                                <TableCell>
-                                    {load.expand?.fromLoc?.name || "N/A"} -{" "}
-                                    {load.expand?.toLoc?.name || "N/A"}
-                                </TableCell>
-                                <TableCell>{load.expand?.car?.model || "N/A"}</TableCell>
-                                <TableCell>{load.expand?.paymentMethod?.type || "N/A"}</TableCell>
-                                <TableCell>{load.telegram || "N/A"}</TableCell>
-                                <TableCell>{load.InAdvanceMethod ? "true" : "false"}</TableCell>
-                                <TableCell>{new Date(load.created).toLocaleDateString()}</TableCell>
-                                <TableCell>{new Date(load.updated).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="gap-1"
-                                            onClick={() => handleOpenEditModal(load)}
-                                        >
-                                            <Pencil size={16} /> Edit
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            variant="destructive"
-                                            className="gap-1"
-                                            onClick={() => {
-                                                if (confirm("Rostdan ham o'chirmoqchimisiz?")) deleteload(load.id);
-                                            }}
-                                        >
-                                            <Trash2 size={16} /> Delete
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </ScrollArea>
+        <div className="mx-auto mt-8 max-w-[1600px] px-4">
+          <Navbar />
+            <Card className="border-2 shadow-sm">
+                <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <CardTitle className="text-2xl">Loads</CardTitle>
+                    </div>
+                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                        <Button onClick={handleOpenAddModal} className="gap-2 border">
+                            <Plus size={16} /> add
+                        </Button>
+                    </div>
+                </CardHeader>
+                <Separator />
+                <CardContent>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-16">
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            <span>
+                                Loading loads... Please wait.
+                            </span>
+                        </div>
+                    ) : loads.length === 0 ? (
+                        <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
+                            No loads found. Click Add to create a new load.
+                        </div>
+                    ) : (
+                        <ScrollArea className="w-full rounded-2xl border">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="min-w-[180px]">ID</TableHead>
+                                        <TableHead>name</TableHead>
+                                        <TableHead>user</TableHead>
+                                        <TableHead>volume</TableHead>
+                                        <TableHead>date</TableHead>
+                                        <TableHead>price</TableHead>
+                                        <TableHead>phoneNumber</TableHead>
+                                        <TableHead>from-to</TableHead>
+                                        <TableHead>car</TableHead>
+                                        <TableHead>payment</TableHead>
+                                        <TableHead>Telegram</TableHead>
+                                        <TableHead>InAdvanceMethod</TableHead>
+                                        <TableHead>created</TableHead>
+                                        <TableHead>updated</TableHead>
+                                        <TableHead></TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {loads.map((load) => (
+                                        <TableRow key={load.id}>
+                                            <TableCell className="font-mono text-xs">
+                                                {load.id}
+                                            </TableCell>
+                                            <TableCell className="font-medium">{load.name}</TableCell>
+                                            <TableCell>
+                                                {load.expand?.user?.username ||
+                                                    load.expand?.user?.name ||
+                                                    load.expand?.user?.email ||
+                                                    "N/A"}
+                                            </TableCell>
+                                            <TableCell>
+                                                {load.volume ? (
+                                                    <div>{load.volume}</div>
+                                                ) : (
+                                                    "N/A"
+                                                )}
+                                            </TableCell>
+                                            <TableCell>{new Date(load.date).toLocaleDateString()}</TableCell>
+                                            <TableCell>{load.price}</TableCell>
+                                            <TableCell>{load.phoneNumber}</TableCell>
+                                            <TableCell>
+                                                {load.expand?.fromLoc?.name || "N/A"} -{" "}
+                                                {load.expand?.toLoc?.name || "N/A"}
+                                            </TableCell>
+                                            <TableCell>{load.expand?.car?.model || "N/A"}</TableCell>
+                                            <TableCell>{load.expand?.paymentMethod?.type || "N/A"}</TableCell>
+                                            <TableCell>{load.telegram || "N/A"}</TableCell>
+                                            <TableCell>{load.InAdvanceMethod ? "true" : "false"}</TableCell>
+                                            <TableCell>{new Date(load.created).toLocaleDateString()}</TableCell>
+                                            <TableCell>{new Date(load.updated).toLocaleDateString()}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="gap-1"
+                                                        onClick={() => handleOpenEditModal(load)}
+                                                    >
+                                                        <Pencil size={16} /> Edit
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="destructive"
+                                                        className="gap-1"
+                                                        onClick={() => {
+                                                            if (confirm("Rostdan ham o'chirmoqchimisiz?"))
+                                                                deleteload(load.id);
+                                                        }}
+                                                    >
+                                                        <Trash2 size={16} /> Delete
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </ScrollArea>
+                    )}
+                </CardContent>
+            </Card>
+
             {isEditModalOpen && editingLoad && (
                 <EditLoadModal
                     load={editingLoad}
@@ -261,6 +294,7 @@ export default function LoadDetailPage() {
                     onSave={handleSaveChanges}
                 />
             )}
+
             {isAddModalOpen && (
                 <AddLoadModal
                     onClose={handleCloseAddModal}
