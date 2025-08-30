@@ -19,35 +19,15 @@ export default function Sidebar() {
     <div>
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md"
+        className="cursor-pointer z-50 rounded-md"
       >
         <Menu size={24} />
       </button>
 
-      <div className="hidden md:flex h-screen w-60 bg-white shadow-md flex-col p-4">
-        <h1 className="text-xl font-bold mb-6">Dashboard</h1>
-        <nav className="flex flex-col gap-2">
-          {links.map((link) => {
-            const active = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition ${
-                  active ? "bg-gray-200 font-semibold" : ""
-                }`}
-              >
-                {link.icon}
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
       <AnimatePresence>
         {open && (
           <>
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
@@ -55,17 +35,17 @@ export default function Sidebar() {
               onClick={() => setOpen(false)}
               className="fixed inset-0 bg-black z-40"
             />
-
+ 
             <motion.div
               initial={{ x: -200 }}
               animate={{ x: 0 }}
               exit={{ x: -200 }}
               transition={{ duration: 0.3 }}
-              className="fixed top-0 left-0 h-screen w-60 bg-white shadow-md flex flex-col p-4 z-50"
+              className="fixed top-0 left-0 h-screen w-[200px] bg-white shadow-md flex flex-col p-4 z-50"
             >
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-xl font-bold">Dashboard</h1>
-                <button onClick={() => setOpen(false)}>
+                <button onClick={() => setOpen(false)} className="cursor-pointer">
                   <X size={24} />
                 </button>
               </div>
@@ -76,10 +56,9 @@ export default function Sidebar() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      onClick={() => setOpen(false)} 
-                      className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition ${
-                        active ? "bg-gray-200 font-semibold" : ""
-                      }`}
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition ${active ? "bg-gray-200 font-semibold" : ""
+                        }`}
                     >
                       {link.icon}
                       {link.label}

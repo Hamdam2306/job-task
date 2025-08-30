@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import AddCarModal from "@/components/addCarModal";
 import Navbar from "@/components/navbar";
-import Sidebar from "@/components/app-sidebar";
+
 
 type User = {
   id: string;
@@ -70,8 +70,23 @@ export default function CarsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // Check screen size for responsiveness
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
 
   async function fetchCars() {
     if (abortControllerRef.current) {
@@ -110,7 +125,6 @@ export default function CarsPage() {
       }
     }
   }
-
 
   async function addCar(data: { name: string; volume: number | string; type: string; carNumber: string }) {
     try {
@@ -163,6 +177,14 @@ export default function CarsPage() {
     handleCloseModal();
   };
 
+  const toggleRowExpansion = (id: string) => {
+    if (expandedRow === id) {
+      setExpandedRow(null);
+    } else {
+      setExpandedRow(id);
+    }
+  };
+
   useEffect(() => {
     fetchCars();
     return () => {
@@ -183,44 +205,135 @@ export default function CarsPage() {
   );
 
   return (
-    <div className="flex ">
-      <Sidebar />
+    <div className="mx-auto mt-8 w-full max-w-[1500px] px-4">
+      <Navbar />
+      <Card className="border-2 shadow-sm">
+        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="text-2xl">Cars</CardTitle>
+          </div>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 border">
+              <Plus size={16} /> add
+            </Button>
+          </div>
+        </CardHeader>
+        <Separator />
+        <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              <span>
+                Loading cars... Please wait.
+              </span>
+            </div>
+          ) : formattedCars.length === 0 ? (
+            <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
+              No cars found. Click Add to create a new car.
+            </div>
+          ) : isMobileView ? (
+            // Mobile view with cards
+            <div className="space-y-4">
+              {formattedCars.map((car) => (
+                <div key={car.id} className="rounded-2xl border p-4">
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleRowExpansion(car.id)}
+                  >
+                    <div className="font-medium">{car.name}</div>
+                    <Button variant="ghost" size="sm">
+                      {expandedRow === car.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </Button>
+                  </div>
 
-      <div className="mx-auto mt-8 w-full max-w-[1600px] px-4">
-        <Navbar />
-        <Card className="border-2 shadow-sm">
-          <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <CardTitle className="text-2xl">Cars</CardTitle>
+                  {expandedRow === car.id && (
+                    <div className="mt-4 space-y-2">
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="text-muted-foreground">ID:</div>
+                        <div className="font-mono text-xs truncate">{car.id}</div>
+
+                        <div className="text-muted-foreground">User:</div>
+                        <div>
+                          {car.expand?.user?.username ||
+                            car.expand?.user?.name ||
+                            car.expand?.user?.email ||
+                            "N/A"}
+                        </div>
+
+                        <div className="text-muted-foreground">Volume:</div>
+                        <div>{car.volume || "N/A"}</div>
+
+                        <div className="text-muted-foreground">Type:</div>
+                        <div>{car.type || "N/A"}</div>
+
+                        <div className="text-muted-foreground">Model:</div>
+                        <div>{car.expand?.model?.name || "N/A"}</div>
+
+                        <div className="text-muted-foreground">Number:</div>
+                        <div>{car.carNumber || "N/A"}</div>
+
+                        <div className="text-muted-foreground">From:</div>
+                        <div>{car.expand?.from?.name || "N/A"}</div>
+
+                        <div className="text-muted-foreground">To:</div>
+                        <div>{car.expand?.to?.name || "N/A"}</div>
+
+                        <div className="text-muted-foreground">Location:</div>
+                        <div>
+                          {car.location ? (
+                            <span className="font-mono text-xs">
+                              {car.location.lat}, {car.location.lon}
+                            </span>
+                          ) : (
+                            "N/A"
+                          )}
+                        </div>
+
+                        <div className="text-muted-foreground">Created:</div>
+                        <div>{car._created}</div>
+
+                        <div className="text-muted-foreground">Updated:</div>
+                        <div>{car._updated}</div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1 flex-1"
+                          onClick={() => handleOpenEditModal(car)}
+                        >
+                          <Pencil size={16} /> Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="gap-1 flex-1"
+                          onClick={() => {
+                            if (
+                              confirm("Are you sure you want to delete this car?")
+                            )
+                              deleteCar(car.id);
+                          }}
+                        >
+                          <Trash2 size={16} /> Delete
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-              <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 border">
-                <Plus size={16} /> add
-              </Button>
-            </div>
-          </CardHeader>
-          <Separator />
-          <CardContent>
-            {loading ? (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                <span>
-                  Loading cars... Please wait.
-                </span>
-              </div>
-            ) : formattedCars.length === 0 ? (
-              <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
-                No cars found. Click Add to create a new car.
-              </div>
-            ) : (
-              <ScrollArea className="w-full rounded-2xl border">
-                <Table>
+          ) : (
+            <ScrollArea className="w-full rounded-2xl border">
+              <div className="relative w-full overflow-auto">
+                <Table className="w-full">
                   <TableHeader>
                     <TableRow className="">
                       <TableHead className="min-w-[180px]">ID</TableHead>
                       <TableHead>name</TableHead>
                       <TableHead>user</TableHead>
-                      <TableHead>volcume</TableHead>
+                      <TableHead>volume</TableHead>
                       <TableHead>type</TableHead>
                       <TableHead>Model</TableHead>
                       <TableHead>number</TableHead>
@@ -229,37 +342,37 @@ export default function CarsPage() {
                       <TableHead>location</TableHead>
                       <TableHead>created</TableHead>
                       <TableHead>updated</TableHead>
-
+                      <TableHead className="text-right">actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {formattedCars.map((car) => (
                       <TableRow key={car.id}>
-                        <TableCell className="font-mono text-xs">
+                        <TableCell className="font-mono text-xs max-w-[180px] truncate">
                           {car.id}
                         </TableCell>
-                        <TableCell className="font-medium">{car.name}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-medium max-w-[120px] truncate">{car.name}</TableCell>
+                        <TableCell className="max-w-[120px] truncate">
                           {car.expand?.user?.username ||
                             car.expand?.user?.name ||
                             car.expand?.user?.email ||
                             "N/A"}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="max-w-[80px] truncate">
                           {car.volume ? (
                             <div>{car.volume}</div>
                           ) : (
                             "N/A"
                           )}
                         </TableCell>
-                        <TableCell>{car.type || "N/A"}</TableCell>
-                        <TableCell>
+                        <TableCell className="max-w-[80px] truncate">{car.type || "N/A"}</TableCell>
+                        <TableCell className="max-w-[120px] truncate">
                           {car.expand?.model?.name || "N/A"}
                         </TableCell>
-                        <TableCell>{car.carNumber || "N/A"}</TableCell>
-                        <TableCell>{car.expand?.from?.name || "N/A"}</TableCell>
-                        <TableCell>{car.expand?.to?.name || "N/A"}</TableCell>
-                        <TableCell>
+                        <TableCell className="max-w-[100px] truncate">{car.carNumber || "N/A"}</TableCell>
+                        <TableCell className="max-w-[120px] truncate">{car.expand?.from?.name || "N/A"}</TableCell>
+                        <TableCell className="max-w-[120px] truncate">{car.expand?.to?.name || "N/A"}</TableCell>
+                        <TableCell className="max-w-[140px] truncate">
                           {car.location ? (
                             <span className="font-mono text-xs">
                               {car.location.lat}, {car.location.lon}
@@ -268,11 +381,10 @@ export default function CarsPage() {
                             "N/A"
                           )}
                         </TableCell>
-                        <TableCell>{car.created}</TableCell>
-                        <TableCell>{car.updated}</TableCell>
-
-                        <TableCell>
-                          <div className="flex items-center gap-2">
+                        <TableCell className="max-w-[140px] truncate">{car._created}</TableCell>
+                        <TableCell className="max-w-[140px] truncate">{car._updated}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
                             <Button
                               size="sm"
                               variant="outline"
@@ -300,24 +412,23 @@ export default function CarsPage() {
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
-            )}
-          </CardContent>
-        </Card>
-        {isModalOpen && editingCar && (
-          <EditCarModal
-            car={editingCar}
-            onClose={handleCloseModal}
-            onSave={handleSaveChanges}
-          />
-        )}
-        <AddCarModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onSave={addCar}
+              </div>
+            </ScrollArea>
+          )}
+        </CardContent>
+      </Card>
+      {isModalOpen && editingCar && (
+        <EditCarModal
+          car={editingCar}
+          onClose={handleCloseModal}
+          onSave={handleSaveChanges}
         />
-      </div>
+      )}
+      <AddCarModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={addCar}
+      />
     </div>
-
   );
 }
