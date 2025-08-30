@@ -216,7 +216,7 @@ export default function CarsPage() {
               <ScrollArea className="w-full rounded-2xl border">
                 <Table>
                   <TableHeader>
-                    <TableRow>
+                    <TableRow className="">
                       <TableHead className="min-w-[180px]">ID</TableHead>
                       <TableHead>name</TableHead>
                       <TableHead>user</TableHead>
