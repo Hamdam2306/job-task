@@ -110,7 +110,7 @@ export default function CarsPage() {
     }
   }
 
-  async function addCar(data: any) {
+  async function addCar(data: { name: string; volume: number | string; type: string; carNumber: string }) {
     try {
       await client.collection("cars").create({
         ...data,
@@ -210,14 +210,14 @@ export default function CarsPage() {
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              <span>  
-                Loading cars... Please wait.  
-                
+              <span>
+                Loading cars... Please wait.
+
               </span>
             </div>
           ) : formattedCars.length === 0 ? (
             <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
-              No cars found. Click "Add" to create a new car.
+              No cars found. Click Add to create a new car.
             </div>
           ) : (
             <ScrollArea className="w-full rounded-2xl border">
@@ -236,7 +236,7 @@ export default function CarsPage() {
                     <TableHead>location</TableHead>
                     <TableHead>created</TableHead>
                     <TableHead>updated</TableHead>
-             
+
                   </TableRow>
                 </TableHeader>
                 <TableBody>

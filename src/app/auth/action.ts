@@ -28,7 +28,7 @@ export async function authUser(mode: "register" | "login", data: AuthData) {
       localStorage.setItem("pb_auth", client.authStore.token);
     }
     return user;
-  } catch (err: any) {
+  } catch (err: Error | any) {
     console.error("Auth error:", err);
     throw err;
   }

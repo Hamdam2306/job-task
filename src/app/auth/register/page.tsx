@@ -23,7 +23,8 @@ export default function RegisterPage() {
       await authUser("register", form);
       window.location.href = "/cars";
     } catch (err) {
-      alert("register error: " + (err as any).message);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      alert("register error: " + errorMessage);
     }
   };
 

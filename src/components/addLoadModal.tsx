@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 
 type AddLoadModalProps = {
     onClose: () => void;
-    onSave: (data: any) => void;
+    onSave: (data: unknown) => void;
 };
 
 const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         const record = await pb.collection("cars").create(data);
 
         return NextResponse.json(record, { status: 201 });
-    } catch (error: any) {
+    } catch (error: Error | any) {
         return NextResponse.json({ error: error.message }, { status: 400 });
     }
 }
