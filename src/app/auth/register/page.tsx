@@ -117,7 +117,7 @@ export default function RegisterPage() {
           </button>
 
           <p className="text-center text-sm text-gray-600 mt-3">
-            Don't have an account?{" "}
+            Do not have an account?{" "}
             <a
               href="/auth/login"
               className=" font-medium hover:underline"
