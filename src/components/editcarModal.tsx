@@ -51,12 +51,12 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-lg w-full">
         <DialogHeader>
-          <DialogTitle>Mashinani Tahrirlash</DialogTitle>
+          <DialogTitle>edit car</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div>
-            <Label htmlFor="name">Nom</Label>
+            <Label htmlFor="name">name</Label>
             <Input
               id="name"
               name="name"
@@ -67,7 +67,7 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
           </div>
 
           <div>
-            <Label htmlFor="volume">Hajm (m³)</Label>
+            <Label htmlFor="volume">volcume</Label>
             <Input
               id="volume"
               name="volume"
@@ -79,7 +79,7 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
           </div>
 
           <div>
-            <Label htmlFor="type">Turi</Label>
+            <Label htmlFor="type">type</Label>
             <Input
               id="type"
               name="type"
@@ -90,7 +90,7 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
           </div>
 
           <div>
-            <Label htmlFor="carNumber">Raqam</Label>
+            <Label htmlFor="carNumber">carNumber</Label>
             <Input
               id="carNumber"
               name="carNumber"
@@ -102,9 +102,9 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
 
           <DialogFooter className="pt-4 flex justify-end gap-2">
             <Button variant="outline" type="button" onClick={onClose}>
-              Bekor qilish
+              cancel
             </Button>
-            <Button type="submit">Saqlash</Button>
+            <Button type="submit">save</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -11,9 +11,8 @@ export default function RegisterPage() {
     passwordConfirm: "",
   });
 
-  // Agar user oldin login bo‘lgan bo‘lsa → avtomatik cars sahifasiga
   useEffect(() => {
-    if (client.authStore.model) {
+    if (client.authStore.record) {
       window.location.href = "/cars";
     }
   }, []);
@@ -22,10 +21,9 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       await authUser("register", form);
-      // register tugagach cars sahifasiga
       window.location.href = "/cars";
     } catch (err) {
-      alert("Xatolik: " + (err as any).message);
+      alert("register error: " + (err as any).message);
     }
   };
 

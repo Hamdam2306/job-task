@@ -1,5 +1,3 @@
-// src/components/addLoadModal.tsx
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -12,7 +10,6 @@ type AddLoadModalProps = {
 };
 
 const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
-    // Majburiy maydonlar uchun state-lar
     const [name, setName] = useState('');
     const [fromLoc, setFromLoc] = useState('');
     const [toLoc, setToLoc] = useState('');
@@ -20,41 +17,51 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
     const [price, setPrice] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [telegram, setTelegram] = useState('');
-    
-    // Boshqa majburiy maydonlarga standart qiymatlar berish
+
     const defaultData = {
-        user: "o'zingizning foydalanuvchi ID", // Sizning joriy foydalanuvchingizning ID'si bo'lishi kerak
-        car: "o'zingizning avtomobil ID", // Tanlangan avtomobil ID'si
-        paymentMethod: "o'zingizning to'lov usuli ID", // Tanlangan to'lov usuli ID'si
+        user: "",
+        car: "",
+        paymentMethod: "",
         InAdvanceMethod: false,
-        date: new Date().toISOString(), // Joriy sana
+        date: new Date().toISOString(),
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSave({ 
-            name, 
-            fromLoc, 
-            toLoc, 
+        onSave({
+            name,
+            fromLoc,
+            toLoc,
             volume,
             price,
             phoneNumber,
             telegram,
-            ...defaultData // Majburiy ma'lumotlarga qo'shimcha standart qiymatlar
+            ...defaultData
         });
+    };
+
+    const handleSave = () => {
+        if (!name.trim()) {
+            alert("Please enter a valid name.");
+            return;
+        }
+        onSave({
+            name,
+            fromLoc,
+        })
     };
 
     return (
         <Dialog open={true} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Yangi yuk qo'shish</DialogTitle>
+                    <DialogTitle>Add new load</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">
-                                Nomi
+                                name
                             </Label>
                             <Input
                                 id="name"
@@ -66,7 +73,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="fromLoc" className="text-right">
-                                Qayerdan
+                                fromLoc
                             </Label>
                             <Input
                                 id="fromLoc"
@@ -78,7 +85,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="toLoc" className="text-right">
-                                Qayerga
+                                to
                             </Label>
                             <Input
                                 id="toLoc"
@@ -90,7 +97,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="volume" className="text-right">
-                                Hajmi
+                                volcume
                             </Label>
                             <Input
                                 id="volume"
@@ -102,7 +109,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="price" className="text-right">
-                                Narxi
+                                price
                             </Label>
                             <Input
                                 id="price"
@@ -114,7 +121,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="phoneNumber" className="text-right">
-                                Telefon
+                                phoneNumber
                             </Label>
                             <Input
                                 id="phoneNumber"
@@ -126,7 +133,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="telegram" className="text-right">
-                                Telegram
+                                telegram
                             </Label>
                             <Input
                                 id="telegram"
@@ -138,8 +145,8 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={onClose}>Bekor qilish</Button>
-                        <Button type="submit">Qo'shish</Button>
+                        <Button type="button" variant="outline" onClick={onClose}>cancel</Button>
+                        <Button type="submit" onClick={handleSave}>add</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

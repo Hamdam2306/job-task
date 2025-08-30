@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -38,9 +37,9 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ 
-      ...prev, 
-      [name]: type === 'checkbox' ? checked : value 
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -58,12 +57,12 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Yukni Tahrirlash</DialogTitle>
+          <DialogTitle>load edit</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div>
-            <Label htmlFor="name">Nom</Label>
+            <Label htmlFor="name">name</Label>
             <Input
               id="name"
               name="name"
@@ -74,7 +73,7 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
           </div>
 
           <div>
-            <Label htmlFor="volume">Hajm (m³)</Label>
+            <Label htmlFor="volume">volcume</Label>
             <Input
               id="volume"
               name="volume"
@@ -85,7 +84,7 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
           </div>
 
           <div>
-            <Label htmlFor="price">Narx (USD)</Label>
+            <Label htmlFor="price">price</Label>
             <Input
               id="price"
               name="price"
@@ -96,7 +95,7 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
           </div>
 
           <div>
-            <Label htmlFor="phoneNumber">Telefon raqami</Label>
+            <Label htmlFor="phoneNumber">phoneNumber</Label>
             <Input
               id="phoneNumber"
               name="phoneNumber"
@@ -108,7 +107,7 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
 
 
           <div>
-            <Label htmlFor="date">Sana</Label>
+            <Label htmlFor="date">date</Label>
             <Input
               id="date"
               name="date"
@@ -125,14 +124,14 @@ export default function EditLoadModal({ load, onClose, onSave }: EditLoadModalPr
               checked={formData.InAdvanceMethod}
               onCheckedChange={handleCheckboxChange}
             />
-            <Label htmlFor="InAdvanceMethod">Oldindan to'lov</Label>
+            <Label htmlFor="InAdvanceMethod">InAdvanceMethod</Label>
           </div>
 
           <DialogFooter className="pt-4 flex justify-end gap-2">
             <Button variant="outline" type="button" onClick={onClose}>
-              Bekor qilish
+              cancel
             </Button>
-            <Button type="submit">Saqlash</Button>
+            <Button type="submit">save</Button>
           </DialogFooter>
         </form>
       </DialogContent>

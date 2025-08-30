@@ -1,12 +1,9 @@
-// src/app/cars/page.tsx
-
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import client from "@/lib/pocketbase";
 import EditCarModal from "@/components/editcarModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
@@ -73,14 +69,13 @@ export default function CarsPage() {
   const [editingCar, setEditingCar] = useState<Car | null>(null);
   const [isauth, setIsauth] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const unsubscribe = client.authStore.onChange(() => {
       setIsauth(client.authStore.isValid);
     });
-    // boshlang'ich holat
     setIsauth(client.authStore.isValid);
-
     return () => unsubscribe();
   }, []);
 
@@ -90,16 +85,28 @@ export default function CarsPage() {
   }
 
   async function fetchCars() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
     try {
       setLoading(true);
       const records = await client.collection("cars").getFullList<Car>({
         expand: "user,from,to,model",
+        requestKey: null,
       });
-      setCars(records);
-    } catch (error) {
+      if (!abortControllerRef.current?.signal.aborted) {
+        setCars(records);
+      }
+    } catch (error: any) {
+      if (error?.isAbort || abortControllerRef.current?.signal.aborted) {
+        return;
+      }
       console.error("Error fetching cars:", error);
     } finally {
-      setLoading(false);
+      if (!abortControllerRef.current?.signal.aborted) {
+        setLoading(false);
+      }
     }
   }
 
@@ -107,7 +114,7 @@ export default function CarsPage() {
     try {
       await client.collection("cars").create({
         ...data,
-        volume: Number(data.volume), // stringni numberga o‘zgartiramiz
+        volume: Number(data.volume),
         user: client.authStore.record?.id,
       });
       fetchCars();
@@ -118,7 +125,6 @@ export default function CarsPage() {
 
   async function updateCar(id: string, data: Partial<Car>) {
     try {
-      // Yangilashdan oldin 'volume'ni numberga o'tkazish
       const updatedData = {
         ...data,
         volume: Number(data.volume),
@@ -157,6 +163,11 @@ export default function CarsPage() {
 
   useEffect(() => {
     fetchCars();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
   const formattedCars = useMemo(
@@ -182,13 +193,11 @@ export default function CarsPage() {
           </Button>
         </div>
       )}
+
       <Card className="border-2 shadow-sm">
         <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-2xl">Cars</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              PocketBase dagi mashinalar roʻyxati
-            </p>
           </div>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 border">
@@ -201,11 +210,14 @@ export default function CarsPage() {
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              <span>Yuklanmoqda…</span>
+              <span>  
+                Loading cars... Please wait.  
+                
+              </span>
             </div>
           ) : formattedCars.length === 0 ? (
             <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
-              Hech qanday mashina topilmadi.
+              No cars found. Click "Add" to create a new car.
             </div>
           ) : (
             <ScrollArea className="w-full rounded-2xl border">
@@ -213,18 +225,18 @@ export default function CarsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="min-w-[180px]">ID</TableHead>
-                    <TableHead>Nom</TableHead>
-                    <TableHead>Foydalanuvchi</TableHead>
-                    <TableHead>Hajm</TableHead>
-                    <TableHead>Turi</TableHead>
+                    <TableHead>name</TableHead>
+                    <TableHead>user</TableHead>
+                    <TableHead>volcume</TableHead>
+                    <TableHead>type</TableHead>
                     <TableHead>Model</TableHead>
-                    <TableHead>Raqam</TableHead>
-                    <TableHead>Dan</TableHead>
-                    <TableHead>Gacha</TableHead>
-                    <TableHead>Joylashuv</TableHead>
-                    <TableHead>Yaratildi</TableHead>
-                    <TableHead>Yangilandi</TableHead>
-                    <TableHead className="w-[140px]">Amallar</TableHead>
+                    <TableHead>number</TableHead>
+                    <TableHead>fromLoc</TableHead>
+                    <TableHead>to</TableHead>
+                    <TableHead>location</TableHead>
+                    <TableHead>created</TableHead>
+                    <TableHead>updated</TableHead>
+             
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -238,18 +250,18 @@ export default function CarsPage() {
                         {car.expand?.user?.username ||
                           car.expand?.user?.name ||
                           car.expand?.user?.email ||
-                          "Noma'lum"}
+                          "N/A"}
                       </TableCell>
                       <TableCell>
                         {car.volume ? (
-                          <Badge variant="secondary">{car.volume}</Badge>
+                          <div>{car.volume}</div>
                         ) : (
                           "N/A"
                         )}
                       </TableCell>
                       <TableCell>{car.type || "N/A"}</TableCell>
                       <TableCell>
-                        {car.expand?.model?.name || "Noma'lum"}
+                        {car.expand?.model?.name || "N/A"}
                       </TableCell>
                       <TableCell>{car.carNumber || "N/A"}</TableCell>
                       <TableCell>{car.expand?.from?.name || "N/A"}</TableCell>
@@ -273,7 +285,7 @@ export default function CarsPage() {
                             className="gap-1"
                             onClick={() => handleOpenEditModal(car)}
                           >
-                            <Pencil size={16} /> Tahrirlash
+                            <Pencil size={16} /> Edit
                           </Button>
                           <Button
                             size="sm"
@@ -286,7 +298,7 @@ export default function CarsPage() {
                                 deleteCar(car.id);
                             }}
                           >
-                            <Trash2 size={16} /> O'chirish
+                            <Trash2 size={16} /> Delete
                           </Button>
                         </div>
                       </TableCell>
@@ -298,8 +310,6 @@ export default function CarsPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Tahrirlash modalini shartli ravishda ko'rsatish */}
       {isModalOpen && editingCar && (
         <EditCarModal
           car={editingCar}
@@ -307,7 +317,6 @@ export default function CarsPage() {
           onSave={handleSaveChanges}
         />
       )}
-
       <AddCarModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

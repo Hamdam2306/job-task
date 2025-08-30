@@ -9,14 +9,17 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await authUser("login", form);
-      window.location.href = "/cars"; // login tugagach cars sahifasiga
+      window.location.href = "/cars";
     } catch (err) {
-      alert("Xatolik: " + (err as any).message);
+      alert("auth error: " + (err as any).message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 max-w-md mx-auto"
+    >
       <input
         type="email"
         placeholder="Email"
