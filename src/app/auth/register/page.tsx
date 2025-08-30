@@ -12,23 +12,18 @@ const client = new PocketBase('http://back.buyur.yurtal.tech');
 
 export default function RegisterPage() {
   const router = useRouter();
-
-  // Form maydonlari uchun state'lar
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-
-  // Yuklanish va xatolik holatlari uchun state'lar
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Sahifa yangilanishining oldini olish
+    e.preventDefault(); 
     setIsLoading(true);
     setError("");
 
-    // 1. Parollar mosligini tekshirish
     if (password !== passwordConfirm) {
       setError("Parollar bir-biriga mos kelmadi.");
       setIsLoading(false);
@@ -36,34 +31,24 @@ export default function RegisterPage() {
     }
 
     try {
-      // 2. Yangi foydalanuvchini yaratish uchun ma'lumotlarni tayyorlash
       const data = {
         username: username,
         email: email,
         password: password,
         passwordConfirm: passwordConfirm,
-        emailVisibility: true, // PocketBase talab qilishi mumkin
+        emailVisibility: true, 
       };
-
-      // 3. PocketBase'ga yangi foydalanuvchi yaratish uchun so'rov yuborish
+ 
       await client.collection('users').create(data);
-
-      // 4. Foydalanuvchi yaratilgandan so'ng, tizimga kirish (login qilish)
-      // Bu qadam access token'ni olish uchun kerak
       await client.collection('users').authWithPassword(email, password);
-
-      // Muvaffaqiyatli kirilgandan so'ng PocketBase JS SDK avtomatik tarzda
-      // token'ni 'localStorage'ga saqlaydi. Biz hech narsa qilishimiz shart emas.
 
       console.log("Muvaffaqiyatli ro'yxatdan o'tildi va tizimga kirildi!");
       console.log("Saqlangan token:", client.authStore.token);
-
-      // 5. Foydalanuvchini boshqa sahifaga yo'naltirish
-      router.push("/cars"); // Masalan, asosiy sahifaga
+ 
+      router.push("/cars"); 
 
     } catch (err: any) {
       console.error("Ro'yxatdan o'tishda xatolik:", err);
-      // PocketBase'dan kelgan xatolik xabarini ko'rsatish
       setError(err.message || "Noma'lum xatolik yuz berdi.");
     } finally {
       setIsLoading(false);
@@ -118,8 +103,7 @@ export default function RegisterPage() {
             className="border p-3 rounded"
             required
           />
-
-          {/* Xatolik xabarini ko'rsatish bloki */}
+ 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <button
