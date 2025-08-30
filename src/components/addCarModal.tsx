@@ -78,21 +78,21 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Add new car</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name *
+              Name
             </Label>
             <Input
               id="name"
               name="name"
               value={carData.name}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="car name"
               required
             />
@@ -107,7 +107,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               type="number"
               value={carData.volume}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="volume"
             />
           </div>
@@ -120,7 +120,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="type"
               value={carData.type}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="car type"
             />
           </div>
@@ -133,7 +133,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="carNumber"
               value={carData.carNumber}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="car number"
             />
           </div>
@@ -146,7 +146,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="model"
               value={carData.model}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="car model"
             />
           </div>
@@ -159,7 +159,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="user"
               value={carData.user}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="user name"
             />
           </div>
@@ -172,7 +172,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="location"
               value={carData.location}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="current location"
             />
           </div>
@@ -185,7 +185,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="from"
               value={carData.from}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="departure location"
             />
           </div>
@@ -198,7 +198,7 @@ export default function AddCarModal({ isOpen, onClose, onSave }: AddCarModalProp
               name="to"
               value={carData.to}
               onChange={handleChange}
-              className="col-span-3"
+              className="w-[300px]"
               placeholder="destination"
             />
           </div>

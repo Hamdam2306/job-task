@@ -85,25 +85,25 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg w-full">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Edit Car</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 mt-2 max-h-[70vh] overflow-y-auto">
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               name="name"
               value={formData.name || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Car name"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="volume">Volume</Label>
             <Input
               id="volume"
@@ -111,92 +111,92 @@ export default function EditCarModal({ car, onClose, onSave }: EditCarModalProps
               type="number"
               value={formData.volume || ""}
               onChange={handleChange}
-              className="mt-1"
-              placeholder="Volume in m3"
+              className="mt-2 w-[300px]"
+              placeholder="Volume"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="type">Type</Label>
             <Input
               id="type"
               name="type"
               value={formData.type || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Car type"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="carNumber">Car Number</Label>
             <Input
               id="carNumber"
               name="carNumber"
               value={formData.carNumber || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Car number"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="model">Model</Label>
             <Input
               id="model"
               name="model"
               value={formData.expand?.model?.name || formData.model || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Car model"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="user">User</Label>
             <Input
               id="user"
               name="user"
               value={formData.expand?.user?.username || formData.expand?.user?.name || formData.user || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="User name"
               disabled
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="location">Location</Label>
             <Input
               id="location"
               name="location"
               value={formData.location ? `${formData.location.lat}, ${formData.location.lon}` : ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Current location"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="from">From</Label>
             <Input
               id="from"
               name="from"
               value={formData.expand?.from?.name || formData.from || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Departure location"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="to">To</Label>
             <Input
               id="to"
               name="to"
               value={formData.expand?.to?.name || formData.to || ""}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-2 w-[300px]"
               placeholder="Destination"
             />
           </div>

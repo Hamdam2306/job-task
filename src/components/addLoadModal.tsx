@@ -58,7 +58,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Load name"
                         />
                     </div>
@@ -71,7 +71,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={fromLoc}
                             onChange={(e) => setFromLoc(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Departure location"
                         />
                     </div>
@@ -84,7 +84,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={toLoc}
                             onChange={(e) => setToLoc(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Destination"
                         />
                     </div>
@@ -97,7 +97,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={user}
                             onChange={(e) => setUser(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="User name"
                         />
                     </div>
@@ -110,7 +110,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={volume}
                             onChange={(e) => setVolume(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Volume in m3"
                         />
                     </div>
@@ -123,7 +123,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={car}
                             onChange={(e) => setCar(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Car details"
                         />
                     </div>
@@ -136,7 +136,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
                             required
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Price amount"
                         />
                     </div>
@@ -148,7 +148,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             id="phoneNumber"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="+998 XX XXX XX XX"
                         />
                     </div>
@@ -160,7 +160,7 @@ const AddLoadModal = ({ onClose, onSave }: AddLoadModalProps) => {
                             id="paymentMethod"
                             value={paymentMethod}
                             onChange={(e) => setPaymentMethod(e.target.value)}
-                            className="col-span-3"
+                            className="w-[300px]"
                             placeholder="Payment method"
                         />
                     </div>
