@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 
-const client = new PocketBase("https://back.buyur.yurtal.tech");
+const client = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URLm || "http://back.buyur.yurtal.tech");
 
 
 if (typeof window !== "undefined") {
