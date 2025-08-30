@@ -68,7 +68,6 @@ export default function CarsPage() {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
-  const [isauth, setIsauth] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -77,27 +76,40 @@ export default function CarsPage() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+
     abortControllerRef.current = new AbortController();
+
     try {
       setLoading(true);
+
       const records = await client.collection("cars").getFullList<Car>({
         expand: "user,from,to,model",
         requestKey: null,
       });
+
       if (!abortControllerRef.current?.signal.aborted) {
         setCars(records);
       }
-    } catch (error: any) {
-      if (error?.isAbort || abortControllerRef.current?.signal.aborted) {
+    } catch (error: unknown) {
+      if (
+        (error as any)?.isAbort ||
+        abortControllerRef.current?.signal.aborted
+      ) {
         return;
       }
-      console.error("Error fetching cars:", error);
+
+      if (error instanceof Error) {
+        console.error("Error fetching cars:", error.message);
+      } else {
+        console.error("Error fetching cars: Unknown error", error);
+      }
     } finally {
       if (!abortControllerRef.current?.signal.aborted) {
         setLoading(false);
       }
     }
   }
+
 
   async function addCar(data: { name: string; volume: number | string; type: string; carNumber: string }) {
     try {
@@ -253,8 +265,9 @@ export default function CarsPage() {
                           "N/A"
                         )}
                       </TableCell>
-                      <TableCell>{(car as any)._created}</TableCell>
-                      <TableCell>{(car as any)._updated}</TableCell>
+                      <TableCell>{car.created}</TableCell>
+                      <TableCell>{car.updated}</TableCell>
+
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Button

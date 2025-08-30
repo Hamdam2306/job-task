@@ -92,16 +92,25 @@ export default function LoadDetailPage() {
             if (!abortControllerRef.current?.signal.aborted) {
                 setLoads(records);
             }
-        } catch (error: any) {
-            if (error?.isAbort || abortControllerRef.current?.signal.aborted) {
+        } catch (error: unknown) {
+            if (
+                (error as any)?.isAbort ||
+                abortControllerRef.current?.signal.aborted
+            ) {
                 return;
             }
-            console.error('Fetch error:', error);
+
+            if (error instanceof Error) {
+                console.error("Fetch error:", error.message);
+            } else {
+                console.error("Fetch error: Unknown error", error);
+            }
         } finally {
             if (!abortControllerRef.current?.signal.aborted) {
                 setLoading(false);
             }
         }
+
     }
 
     async function addLoad(data: Omit<Load, 'id' | 'collectionId' | 'collectionName' | 'created' | 'updated'>) {
@@ -175,7 +184,7 @@ export default function LoadDetailPage() {
 
     return (
         <div className="mx-auto mt-8 w-full max-w-[1600px] px-4 ">
-          <Navbar />
+            <Navbar />
             <Card className="border-2 shadow-sm">
                 <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>

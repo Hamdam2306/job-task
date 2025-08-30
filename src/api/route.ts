@@ -10,21 +10,25 @@ export async function POST(req: Request) {
         const data = {
             name: body.name,
             volume: body.volume,
-            user: body.user,         
+            user: body.user,
             type: body.type,
-            location: body.location, 
-            from: body.from,         
-            to: body.to,             
-            model: body.model,       
+            location: body.location,
+            from: body.from,
+            to: body.to,
+            model: body.model,
             carNumber: body.carNumber,
         };
 
         const record = await pb.collection("cars").create(data);
 
         return NextResponse.json(record, { status: 201 });
-    } catch (error: Error | any) {
-        return NextResponse.json({ error: error.message }, { status: 400 });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+        return NextResponse.json({ error: String(error) }, { status: 400 });
     }
+
 }
 
 export async function GET() {

@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setIsLoading(true);
     setError("");
 
@@ -34,20 +34,24 @@ export default function RegisterPage() {
         email: email,
         password: password,
         passwordConfirm: passwordConfirm,
-        emailVisibility: true, 
+        emailVisibility: true,
       };
- 
-      await client.collection('users').create(data);
-      await client.collection('users').authWithPassword(email, password);
 
-      console.log("Muvaffaqiyatli ro'yxatdan o'tildi va tizimga kirildi!");
-      console.log("Saqlangan token:", client.authStore.token);
- 
-      router.push("/cars"); 
+      await client.collection("users").create(data);
+      await client.collection("users").authWithPassword(email, password);
 
-    } catch (err: any) {
-      console.error("Ro'yxatdan o'tishda xatolik:", err);
-      setError(err.message || "Noma'lum xatolik yuz berdi.");
+      console.log("Successfully registered and logged in!");
+      console.log("Saved token:", client.authStore.token);
+
+      router.push("/cars");
+    } catch (err: unknown) {
+      console.error("Error during registration:", err);
+
+      if (err instanceof Error) {
+        setError(err.message || "An unknown error occurred.");
+      } else {
+        setError("An unknown error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +105,7 @@ export default function RegisterPage() {
             className="border p-3 rounded"
             required
           />
- 
+
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <button
@@ -112,15 +116,15 @@ export default function RegisterPage() {
             {isLoading ? "loading..." : "Register"}
           </button>
 
-           <p className="text-center text-sm text-gray-600 mt-3">
-              Don't have an account?{" "}
-              <a
-                href="/auth/login"
-                className=" font-medium hover:underline"
-              >
-                Login
-              </a>
-            </p>
+          <p className="text-center text-sm text-gray-600 mt-3">
+            Don't have an account?{" "}
+            <a
+              href="/auth/login"
+              className=" font-medium hover:underline"
+            >
+              Login
+            </a>
+          </p>
         </form>
       </div>
     </div>
