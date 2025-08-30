@@ -1,13 +1,7 @@
 import PocketBase from "pocketbase";
 
-const client = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URLm || "http://back.buyur.yurtal.tech");
-
-
-if (typeof window !== "undefined") {
-  const token = localStorage.getItem("pb_auth");
-  if (token) {
-    client.authStore.save(token, null);
-  }
-}
+const client = new PocketBase(
+  process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://back.buyur.yurtal.tech"
+);
 
 export default client;
