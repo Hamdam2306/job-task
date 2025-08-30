@@ -18,6 +18,7 @@ import AddLoadModal from '@/components/addLoadModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@radix-ui/react-separator';
 import Navbar from '@/components/navbar';
+import Sidebar from '@/components/app-sidebar';
 
 type User = {
     id: string;
@@ -181,9 +182,11 @@ export default function LoadDetailPage() {
         };
     }, []);
 
-
     return (
-        <div className="mx-auto mt-8 w-full max-w-[1600px] px-4 ">
+      <div className='flex'>
+        <Sidebar />
+
+          <div className="mx-auto mt-8 w-full max-w-[1600px] px-4 ">
             <Navbar />
             <Card className="border-2 shadow-sm">
                 <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -272,7 +275,7 @@ export default function LoadDetailPage() {
                                                         className="gap-1"
                                                         onClick={() => handleOpenEditModal(load)}
                                                     >
-                                                        <Pencil size={16} /> Edit
+                                                        <Pencil size={16} />
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -283,7 +286,7 @@ export default function LoadDetailPage() {
                                                                 deleteload(load.id);
                                                         }}
                                                     >
-                                                        <Trash2 size={16} /> Delete
+                                                        <Trash2 size={16} />
                                                     </Button>
                                                 </div>
                                             </TableCell>
@@ -311,5 +314,6 @@ export default function LoadDetailPage() {
                 />
             )}
         </div>
+      </div>
     );
 }

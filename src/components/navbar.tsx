@@ -3,9 +3,11 @@ import client from "@/lib/pocketbase";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isauth, setIsauth] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsauth(client.authStore.isValid);
@@ -16,9 +18,11 @@ export default function Navbar() {
 
   const logout = useCallback(() => {
     client.authStore.clear();
+    router.push("/auth/login");
     setIsauth(false);
   }, []);
 
+  
   return (
     <nav className="p-4 flex justify-end items-center">
       <div className="mb-4 flex justify-end space-x-2">

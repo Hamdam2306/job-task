@@ -1,12 +1,8 @@
 "use client";
-
+// src/app/auth/register/page.tsx
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PocketBase from 'pocketbase';
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-
-const client = new PocketBase('https://back.buyur.yurtal.tech');
+import client from '@/lib/pocketbase';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,7 +19,7 @@ export default function RegisterPage() {
     setError("");
 
     if (password !== passwordConfirm) {
-      setError("Passwords do not match.");
+      setError("Parollar mos kelmadi.");
       setIsLoading(false);
       return;
     }
@@ -40,18 +36,17 @@ export default function RegisterPage() {
       await client.collection("users").create(data);
       await client.collection("users").authWithPassword(email, password);
 
-      console.log("Successfully registered and logged in!");
-      console.log("Saved token:", client.authStore.token);
+      console.log("Ro'yxatdan o'tish muvaffaqiyatli!");
+      console.log("Foydalanuvchi:", client.authStore.record);
+      console.log("Token:", client.authStore.token);
+      console.log("User ID:", client.authStore.model?.id);
 
+      // Foydalanuvchi muvaffaqiyatli kirgandan so'ng, /cars sahifasiga o'tish
       router.push("/cars");
-    } catch (err: unknown) {
-      console.error("Error during registration:", err);
-
-      if (err instanceof Error) {
-        setError(err.message || "An unknown error occurred.");
-      } else {
-        setError("An unknown error occurred.");
-      }
+    } catch (err: any) {
+      console.error("Ro'yxatdan o'tishda xatolik:", err);
+      const errorMessage = err.response?.message || "Noma'lum xatolik yuz berdi.";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -60,9 +55,11 @@ export default function RegisterPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="flex flex-col gap-4 w-full max-w-md">
-        <Link href={"/cars"}>
-          <Button variant="link">back</Button>
-        </Link>
+        {/* <Link href={"/cars"}>
+          <Button variant="link">
+              <span className="flex items-center"><ArrowLeft/> back</span>
+            </Button>
+        </Link> */}
 
         <form
           onSubmit={handleSubmit}
@@ -117,7 +114,7 @@ export default function RegisterPage() {
           </button>
 
           <p className="text-center text-sm text-gray-600 mt-3">
-            Do not have an account?{" "}
+            Do you have an account?{" "}
             <a
               href="/auth/login"
               className=" font-medium hover:underline"

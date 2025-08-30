@@ -6,7 +6,7 @@ import PocketBase from "pocketbase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 
 const client = new PocketBase("https://back.buyur.yurtal.tech");
 
@@ -46,9 +46,11 @@ export default function LoginPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br p-4">
         <div className="flex flex-col gap-4 w-full max-w-md">
-          <Link href={"/cars"}>
-            <Button variant="link">back</Button>
-          </Link>
+          {/* <Link href={"/cars"}>
+            <Button variant="link">
+              <span className="flex items-center"><ArrowLeft/> back</span>
+            </Button>
+          </Link> */}
 
 
           <Card className="w-full max-w-md shadow-lg rounded-2xl border ">

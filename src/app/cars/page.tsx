@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import AddCarModal from "@/components/addCarModal";
 import Navbar from "@/components/navbar";
+import Sidebar from "@/components/app-sidebar";
 
 type User = {
   id: string;
@@ -182,136 +183,141 @@ export default function CarsPage() {
   );
 
   return (
-    <div className="mx-auto mt-8 w-full max-w-[1600px] px-4">
-      <Navbar />
-      <Card className="border-2 shadow-sm">
-        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle className="text-2xl">Cars</CardTitle>
-          </div>
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-            <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 border">
-              <Plus size={16} /> add
-            </Button>
-          </div>
-        </CardHeader>
-        <Separator />
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              <span>
-                Loading cars... Please wait.
-              </span>
-            </div>
-          ) : formattedCars.length === 0 ? (
-            <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
-              No cars found. Click Add to create a new car.
-            </div>
-          ) : (
-            <ScrollArea className="w-full rounded-2xl border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[180px]">ID</TableHead>
-                    <TableHead>name</TableHead>
-                    <TableHead>user</TableHead>
-                    <TableHead>volcume</TableHead>
-                    <TableHead>type</TableHead>
-                    <TableHead>Model</TableHead>
-                    <TableHead>number</TableHead>
-                    <TableHead>fromLoc</TableHead>
-                    <TableHead>to</TableHead>
-                    <TableHead>location</TableHead>
-                    <TableHead>created</TableHead>
-                    <TableHead>updated</TableHead>
+    <div className="flex ">
+      <Sidebar />
 
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {formattedCars.map((car) => (
-                    <TableRow key={car.id}>
-                      <TableCell className="font-mono text-xs">
-                        {car.id}
-                      </TableCell>
-                      <TableCell className="font-medium">{car.name}</TableCell>
-                      <TableCell>
-                        {car.expand?.user?.username ||
-                          car.expand?.user?.name ||
-                          car.expand?.user?.email ||
-                          "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        {car.volume ? (
-                          <div>{car.volume}</div>
-                        ) : (
-                          "N/A"
-                        )}
-                      </TableCell>
-                      <TableCell>{car.type || "N/A"}</TableCell>
-                      <TableCell>
-                        {car.expand?.model?.name || "N/A"}
-                      </TableCell>
-                      <TableCell>{car.carNumber || "N/A"}</TableCell>
-                      <TableCell>{car.expand?.from?.name || "N/A"}</TableCell>
-                      <TableCell>{car.expand?.to?.name || "N/A"}</TableCell>
-                      <TableCell>
-                        {car.location ? (
-                          <span className="font-mono text-xs">
-                            {car.location.lat}, {car.location.lon}
-                          </span>
-                        ) : (
-                          "N/A"
-                        )}
-                      </TableCell>
-                      <TableCell>{car.created}</TableCell>
-                      <TableCell>{car.updated}</TableCell>
+      <div className="mx-auto mt-8 w-full max-w-[1600px] px-4">
+        <Navbar />
+        <Card className="border-2 shadow-sm">
+          <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <CardTitle className="text-2xl">Cars</CardTitle>
+            </div>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+              <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 border">
+                <Plus size={16} /> add
+              </Button>
+            </div>
+          </CardHeader>
+          <Separator />
+          <CardContent>
+            {loading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <span>
+                  Loading cars... Please wait.
+                </span>
+              </div>
+            ) : formattedCars.length === 0 ? (
+              <div className="rounded-2xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
+                No cars found. Click Add to create a new car.
+              </div>
+            ) : (
+              <ScrollArea className="w-full rounded-2xl border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[180px]">ID</TableHead>
+                      <TableHead>name</TableHead>
+                      <TableHead>user</TableHead>
+                      <TableHead>volcume</TableHead>
+                      <TableHead>type</TableHead>
+                      <TableHead>Model</TableHead>
+                      <TableHead>number</TableHead>
+                      <TableHead>fromLoc</TableHead>
+                      <TableHead>to</TableHead>
+                      <TableHead>location</TableHead>
+                      <TableHead>created</TableHead>
+                      <TableHead>updated</TableHead>
 
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="gap-1"
-                            onClick={() => handleOpenEditModal(car)}
-                          >
-                            <Pencil size={16} /> Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="gap-1"
-                            onClick={() => {
-                              if (
-                                confirm("Are you sure you want to delete this car?")
-                              )
-                                deleteCar(car.id);
-                            }}
-                          >
-                            <Trash2 size={16} /> Delete
-                          </Button>
-                        </div>
-                      </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </ScrollArea>
-          )}
-        </CardContent>
-      </Card>
-      {isModalOpen && editingCar && (
-        <EditCarModal
-          car={editingCar}
-          onClose={handleCloseModal}
-          onSave={handleSaveChanges}
+                  </TableHeader>
+                  <TableBody>
+                    {formattedCars.map((car) => (
+                      <TableRow key={car.id}>
+                        <TableCell className="font-mono text-xs">
+                          {car.id}
+                        </TableCell>
+                        <TableCell className="font-medium">{car.name}</TableCell>
+                        <TableCell>
+                          {car.expand?.user?.username ||
+                            car.expand?.user?.name ||
+                            car.expand?.user?.email ||
+                            "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          {car.volume ? (
+                            <div>{car.volume}</div>
+                          ) : (
+                            "N/A"
+                          )}
+                        </TableCell>
+                        <TableCell>{car.type || "N/A"}</TableCell>
+                        <TableCell>
+                          {car.expand?.model?.name || "N/A"}
+                        </TableCell>
+                        <TableCell>{car.carNumber || "N/A"}</TableCell>
+                        <TableCell>{car.expand?.from?.name || "N/A"}</TableCell>
+                        <TableCell>{car.expand?.to?.name || "N/A"}</TableCell>
+                        <TableCell>
+                          {car.location ? (
+                            <span className="font-mono text-xs">
+                              {car.location.lat}, {car.location.lon}
+                            </span>
+                          ) : (
+                            "N/A"
+                          )}
+                        </TableCell>
+                        <TableCell>{car.created}</TableCell>
+                        <TableCell>{car.updated}</TableCell>
+
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1"
+                              onClick={() => handleOpenEditModal(car)}
+                            >
+                              <Pencil size={16} />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="gap-1"
+                              onClick={() => {
+                                if (
+                                  confirm("Are you sure you want to delete this car?")
+                                )
+                                  deleteCar(car.id);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
+        {isModalOpen && editingCar && (
+          <EditCarModal
+            car={editingCar}
+            onClose={handleCloseModal}
+            onSave={handleSaveChanges}
+          />
+        )}
+        <AddCarModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={addCar}
         />
-      )}
-      <AddCarModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSave={addCar}
-      />
+      </div>
     </div>
+
   );
 }
