@@ -170,7 +170,7 @@ export default function CarsPage() {
   );
 
   return (
-    <div className="mx-auto mt-8 max-w-[1700px] px-4">
+    <div className="mx-auto mt-8 w-full max-w-[1600px] px-4">
       <Navbar />
       <Card className="border-2 shadow-sm">
         <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">

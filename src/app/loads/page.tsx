@@ -174,7 +174,7 @@ export default function LoadDetailPage() {
 
 
     return (
-        <div className="mx-auto mt-8 max-w-[1700px] px-4 ">
+        <div className="mx-auto mt-8 w-full max-w-[1600px] px-4 ">
           <Navbar />
             <Card className="border-2 shadow-sm">
                 <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -216,7 +216,7 @@ export default function LoadDetailPage() {
                                         <TableHead>car</TableHead>
                                         <TableHead>payment</TableHead>
                                         <TableHead>Telegram</TableHead>
-                                        <TableHead>InAdvanceMethod</TableHead>
+                                        <TableHead>InAdvance</TableHead>
                                         <TableHead>created</TableHead>
                                         <TableHead>updated</TableHead>
                                         <TableHead></TableHead>

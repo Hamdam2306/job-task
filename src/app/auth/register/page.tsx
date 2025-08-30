@@ -1,13 +1,11 @@
-"use client"; // Bu komponent faqat brauzerda ishlashini bildiradi
+"use client"; 
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PocketBase from 'pocketbase'; // PocketBase'ni import qilamiz
+import PocketBase from 'pocketbase';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-// PocketBase client'ni shu yerda yaratamiz.
-// O'z hosting manzilingizni yozing.
 const client = new PocketBase('http://back.buyur.yurtal.tech');
 
 export default function RegisterPage() {
